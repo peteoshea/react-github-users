@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { openDB } from 'idb';
 
 const Form = (props) => {
   const [username, setUsername] = useState('');
@@ -7,10 +8,30 @@ const Form = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    axios.get(`https://api.github.com/users/${username}`).then((resp) => {
-      props.onSubmit(resp.data)
-      setUsername('')
-    })
+    axios.get(`https://api.github.com/users/${username}`).then(async (resp) => {
+      props.onSubmit(resp.data);
+
+      if (indexedDB) {
+        const dbName = 'react-github-users';
+        const storeName = 'users';
+        const version = 1;
+        const db = await openDB(dbName, version, {
+          upgrade(db, oldVersion, newVersion, transaction) {
+            if (!db.objectStoreNames.contains(storeName)) {
+              db.createObjectStore(storeName);
+            }
+          },
+        });
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        await store.put(resp.data, username);
+        await tx.done;
+      } else {
+        console.warn('IndexedDB not supported')
+      }
+
+      setUsername('');
+    });
   };
 
   return (
