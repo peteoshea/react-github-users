@@ -27,7 +27,7 @@ const Form = (props) => {
         await store.put(resp.data, username);
         await tx.done;
       } else {
-        console.warn('IndexedDB not supported')
+        console.warn('IndexedDB not supported');
       }
 
       setUsername('');
