@@ -13,6 +13,7 @@ function App() {
 
   useEffect(() => {
     async function fetchCards() {
+      console.log('useEffect triggered');
       if (!indexedDB) {
         console.warn('IndexedDB not supported');
         return;
@@ -29,12 +30,10 @@ function App() {
         },
       });
       const users = await db.transaction(storeName).objectStore(storeName).getAll();
-      for (const user of users) {
-        console.log(user);
-      }
+      setCards(users);
     }
     fetchCards();
-  });
+  }, []); // Add empty array as second parameter so it only runs once
 
   return (
     <div>
