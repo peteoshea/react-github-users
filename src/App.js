@@ -7,8 +7,48 @@ import { openDB } from 'idb';
 function App() {
   const [cards, setCards] = useState([]);
 
-  const addNewCard = (card) => {
+  const addNewCard = async (card) => {
+    console.log('Add: '+ card.login);
+
     setCards([...cards, card]);
+
+    if (!indexedDB) {
+      console.warn('IndexedDB not supported');
+      return;
+    }
+    const dbName = 'react-github-users';
+    const storeName = 'users';
+    const version = 1;
+    const db = await openDB(dbName, version, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName);
+        }
+      },
+    });
+    await db.transaction(storeName, 'readwrite').objectStore(storeName).put(card, card.login);
+  };
+
+  const removeCard = async (username) => {
+    console.log('Remove: '+ username);
+
+    setCards(cards.filter(card => card.login !== username));
+
+    if (!indexedDB) {
+      console.warn('IndexedDB not supported');
+      return;
+    }
+    const dbName = 'react-github-users';
+    const storeName = 'users';
+    const version = 1;
+    const db = await openDB(dbName, version, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        if (!db.objectStoreNames.contains(storeName)) {
+          db.createObjectStore(storeName);
+        }
+      },
+    });
+    await db.transaction(storeName, 'readwrite').objectStore(storeName).delete(username);
   };
 
   useEffect(() => {
@@ -41,7 +81,7 @@ function App() {
         Search a GitHub User
       </h1>
       <Form onSubmit={addNewCard} />
-      <CardList cards={cards} />
+      <CardList cards={cards} removeCard={removeCard} />
     </div>
   );
 }
