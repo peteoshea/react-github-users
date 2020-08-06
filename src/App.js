@@ -7,10 +7,21 @@ import { openDB } from 'idb';
 function App() {
   const [cards, setCards] = useState([]);
 
-  const addNewCard = async (card) => {
-    console.log('Add: '+ card.login);
+  const sendNotification = (message, body) => {
+    Notification.requestPermission();
+    if (Notification.permission === 'granted') {
+      new Notification(message, {
+        body: body,
+      });
+    } else {
+      console.log('Notifications permission: ' + Notification.permission);
+    }
+  };
 
+  const addNewCard = async (card) => {
+    console.log('Add: ' + card.login);
     setCards([...cards, card]);
+    sendNotification('Added ' + card.login, card.name + ' is from ' + card.location);
 
     if (!indexedDB) {
       console.warn('IndexedDB not supported');
@@ -30,9 +41,9 @@ function App() {
   };
 
   const removeCard = async (username) => {
-    console.log('Remove: '+ username);
-
-    setCards(cards.filter(card => card.login !== username));
+    console.log('Remove: ' + username);
+    setCards(cards.filter((card) => card.login !== username));
+    sendNotification('Removed ' + username);
 
     if (!indexedDB) {
       console.warn('IndexedDB not supported');
