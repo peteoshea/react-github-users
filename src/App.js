@@ -7,12 +7,14 @@ import { openDB } from 'idb';
 function App() {
   const [cards, setCards] = useState([]);
 
+  const millisecondsInSecond = 1000;
   const sendNotification = (message, body) => {
     Notification.requestPermission();
     if (Notification.permission === 'granted') {
-      new Notification(message, {
+      const notification = new Notification(message, {
         body: body,
       });
+      setTimeout(notification.close(), 3 * millisecondsInSecond);
     } else {
       console.log('Notifications permission: ' + Notification.permission);
     }
