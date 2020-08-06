@@ -7,6 +7,10 @@ import { openDB } from 'idb';
 function App() {
   const [cards, setCards] = useState([]);
 
+  const say = text => {
+    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+
   const millisecondsInSecond = 1000;
   const sendNotification = (message, body) => {
     Notification.requestPermission();
@@ -24,6 +28,7 @@ function App() {
     console.log('Add: ' + card.login);
     setCards([...cards, card]);
     sendNotification('Added ' + card.login, card.name + ' is from ' + card.location);
+    say('Added ' + card.name);
 
     if (!indexedDB) {
       console.warn('IndexedDB not supported');
@@ -46,6 +51,7 @@ function App() {
     console.log('Remove: ' + username);
     setCards(cards.filter((card) => card.login !== username));
     sendNotification('Removed ' + username);
+    say('Removed ' + username);
 
     if (!indexedDB) {
       console.warn('IndexedDB not supported');
