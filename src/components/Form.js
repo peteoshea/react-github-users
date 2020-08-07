@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Form = (props) => {
   const [username, setUsername] = useState('');
+  const [location, setLocation] = useState([]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -12,6 +13,15 @@ const Form = (props) => {
       setUsername('');
     });
   };
+
+  useEffect(() => {
+    function getPosition() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setLocation(position.coords);
+      });
+    }
+    getPosition();
+  }, []); // Add empty array as second parameter so it only runs once
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm mx-auto">
@@ -30,6 +40,10 @@ const Form = (props) => {
         >
           Search
         </button>
+      </div>
+      <div className="mt-2 text-center">
+        <span className="block">Latitude: {location.latitude}</span>
+        <span className="block">Longitude: {location.longitude}</span>
       </div>
     </form>
   );

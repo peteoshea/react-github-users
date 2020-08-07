@@ -1,3 +1,7 @@
+# React GitHub User Search
+
+This is a demo project from The Advanced JavaScript Full-Stack Bootcamp making use of React, IndexedDB, system Notifications and Geolocation.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
