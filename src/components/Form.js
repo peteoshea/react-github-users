@@ -16,9 +16,19 @@ const Form = (props) => {
 
   useEffect(() => {
     function getPosition() {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setLocation(position.coords);
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position.coords);
+        },
+        (error) => {
+          console.error('Error trying to get current position: ' + error);
+        },
+        {
+          timeout: 1000,
+          maximumAge: 10000,
+          enableHighAccuracy: false,
+        }
+      );
     }
     getPosition();
   }, []); // Add empty array as second parameter so it only runs once
